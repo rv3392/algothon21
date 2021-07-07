@@ -11,36 +11,41 @@ currentPos = np.zeros(nInst)
 def getMyPosition (prcSoFar):
     global currentPos
     (nins,nt) = prcSoFar.shape
-    Y = 51
-    X = 70
-    beta = 0.6005
-    thresh = 0.5
-    arbPortfolio = prcSoFar[Y][nt - 1] - prcSoFar[X][nt - 1] * beta
+    Y = np.array([51, 53, 93, 76, 83, 54])
+    X = np.array([70, 62, 99, 70, 98, 55])
+    beta = np.array([0.6005, 1.1487, 1.0485, 1.2367, 7.8041, 2.0210])
+    thresh = np.array([0.5, 0.5, 1, 1, 0.75, 0.5])
+    # arbPortfolio = prcSoFar[Y][nt - 1] - prcSoFar[X][nt - 1] * beta
+    arbPortfolio = []
+    for i in range(len(Y)):
+        arbPortfolio.append(prcSoFar[Y[i]][nt - 1] - prcSoFar[X[i]][nt - 1] * beta[i])
     print(arbPortfolio)
+
     rpos = np.zeros(nInst)
-    if currentPos[Y] == 0:
-        if arbPortfolio < -thresh:
-            # BUY
-            rpos[Y] = 400
-            rpos[X] = round(-400*beta)
-            print("BUY")
-        elif arbPortfolio > thresh:
-            # SELL
-            rpos[Y] = -400
-            rpos[X] = round(400 * beta)
-            print("SELL")
-    elif currentPos[Y] > 0:
-        if arbPortfolio > 0:
-            # LIQUIDATE
-            rpos[Y] = -400
-            rpos[X] = round(400 * beta)
-            print("LIQUIDATE")
-    elif currentPos[Y] < 0:
-        if arbPortfolio < 0:
-            # LIQUIDATE
-            rpos[Y] = 400
-            rpos[X] = round(-400 * beta)
-            print("LIQUIDATE")
+    for j in range(len(Y)):
+        if currentPos[Y[j]] == 0:
+            if arbPortfolio[j] < -thresh[j]:
+                # BUY
+                rpos[Y[j]] = 100
+                rpos[X[j]] = round(-100*beta[j])
+                print("BUY")
+            elif arbPortfolio[j] > thresh[j]:
+                # SELL
+                rpos[Y[j]] = -100
+                rpos[X[j]] = round(100 * beta[j])
+                print("SELL")
+        elif currentPos[Y[j]] > 0:
+            if arbPortfolio[j] > 0:
+                # LIQUIDATE
+                rpos[Y[j]] = -100
+                rpos[X[j]] = round(100 * beta[j])
+                print("LIQUIDATE")
+        elif currentPos[Y[j]] < 0:
+            if arbPortfolio[j] < 0:
+                # LIQUIDATE
+                rpos[Y[j]] = 100
+                rpos[X[j]] = round(-100 * beta[j])
+                print("LIQUIDATE")
 
     currentPos += rpos
     # The algorithm must return a vector of integers, indicating the position of each stock.
