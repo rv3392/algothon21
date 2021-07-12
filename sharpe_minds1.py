@@ -6,6 +6,7 @@ import numpy as np
 
 nInst=100
 currentPos = np.zeros(nInst)
+POSITION_LIMIT = 10000
 
 # Dummy algorithm to demonstrate function format.
 def getMyPosition (prcSoFar):
@@ -26,8 +27,10 @@ def getMyPosition (prcSoFar):
         if currentPos[Y[j]] == 0:
             if arbPortfolio[j] < -thresh[j]:
                 # BUY
-                rpos[Y[j]] = 100
-                rpos[X[j]] = round(-100*beta[j])
+                highestValue = max(prcSoFar[Y[j]][nt - 1], beta[j] * prcSoFar[X[j]][nt - 1])
+                numToBuy = POSITION_LIMIT / highestValue
+                rpos[Y[j]] = numToBuy
+                rpos[X[j]] = round(-numToBuy*beta[j])
                 print("BUY")
             elif arbPortfolio[j] > thresh[j]:
                 # SELL
