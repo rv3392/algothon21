@@ -3,6 +3,7 @@
 # RENAME THIS FILE WITH YOUR TEAM NAME.
 
 import numpy as np
+import math
 
 nInst=100
 currentPos = np.zeros(nInst)
@@ -28,7 +29,7 @@ def getMyPosition (prcSoFar):
             if arbPortfolio[j] < -thresh[j]:
                 # BUY
                 highestValue = max(prcSoFar[Y[j]][nt - 1], beta[j] * prcSoFar[X[j]][nt - 1])
-                numToBuy = POSITION_LIMIT / highestValue
+                numToBuy = math.floor(POSITION_LIMIT / highestValue)
                 rpos[Y[j]] = numToBuy
                 rpos[X[j]] = round(-numToBuy*beta[j])
                 print("BUY")
