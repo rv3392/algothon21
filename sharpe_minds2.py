@@ -13,8 +13,37 @@ POSITION_LIMIT = 10000
 def getMyPosition (prcSoFar):
     global currentPos
     (nins,nt) = prcSoFar.shape
-    Y = np.array([51, 53, 93, 76, 83, 54])
-    X = np.array([70, 62, 99, 70, 98, 55])
+
+    if nt % 100 == 0:
+        P = np.zeros((100, 100))
+        for i in range(100):
+            for j in range(100):
+                _, p_value, _ = ts.coint(prcSoFar[i, :], df[j, :])
+                P[i, j] = p_value
+
+        n = 5
+        np.fill_diagonal(P, 1)
+        P_flat = P.flatten()
+        index = np.argsort(P_flat)
+        pairs = []
+        candidates = []
+
+        count = 0
+        for idx in index[:500]:
+            i = idx // 100
+            j = idx - i * 100
+            if i not in candidates and j not in candidates:
+                pairs.append((i, j))
+                candidates.append(i)
+                candidates.append(j)
+
+                    ount += 1
+            if count >= n:
+                break
+
+    Y = np.array([i for i, _ in pairs])
+    X = np.array([j for _, j in pairs])
+    
     beta = np.array([0.6005, 1.1487, 1.0485, 1.2367, 7.8041, 2.0210])
     thresh = np.array([0.5, 0.5, 1, 1, 0.75, 0.5])
     # arbPortfolio = prcSoFar[Y][nt - 1] - prcSoFar[X][nt - 1] * beta
